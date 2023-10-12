@@ -13,6 +13,19 @@ app.get("/", (request, response) => {
   response.status(200).send("Novsgd");
 });
 
+// route for get all books form database
+app.get("/books", async (request, response) => {
+    try {
+        const books = await Book.find({});
+      return response.status(200).json(books);
+    } catch (error) {
+      console.log(error.message);
+      response.status(500).send({ message: error.message });
+    }
+  });
+  
+
+
 // route for save a new book
 app.post("/books", async (request, response) => {
   try {
