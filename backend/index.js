@@ -15,16 +15,29 @@ app.get("/", (request, response) => {
 
 // route for get all books form database
 app.get("/books", async (request, response) => {
-    try {
-        const books = await Book.find({});
-      return response.status(200).json(books);
-    } catch (error) {
-      console.log(error.message);
-      response.status(500).send({ message: error.message });
-    }
-  });
-  
+  try {
+    const books = await Book.find({});
+    return response.status(200).json({
+      count: books.length, // make object to count
+      data: books,
+    });
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
+  }
+});
 
+// route for get one book form database by id
+app.get("/books/:id", async (request, response) => {
+  try {
+    const { id } = request.params;
+    const book = await Book.find({ id });
+    return response.status(200).json(book);
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
+  }
+});
 
 // route for save a new book
 app.post("/books", async (request, response) => {
