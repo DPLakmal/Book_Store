@@ -1,9 +1,9 @@
 import express from "express";
 import { Book } from "../models/bookModel.js";
 
-const router = express.Router();
+const booksRoutes = express.Router();
 // route for get all books form database
-app.get('/', async (request, response) => {
+booksRoutes.get('/', async (request, response) => {
   try {
     const books = await Book.find({});
     return response.status(200).json({
@@ -17,7 +17,7 @@ app.get('/', async (request, response) => {
 });
 
 // route for get one book form database by id
-app.get('/:id', async (request, response) => {
+booksRoutes.get('/:id', async (request, response) => {
   try {
     const { id } = request.params;
     const book = await Book.findById(id);
@@ -29,7 +29,7 @@ app.get('/:id', async (request, response) => {
 });
 
 // route for update a book
-app.put('/:id', async (request, response) => {
+booksRoutes.put('/:id', async (request, response) => {
   try {
     if (
       !request.body.title ||
@@ -54,7 +54,7 @@ app.put('/:id', async (request, response) => {
 });
 
 // route for delete one book form database by id
-app.delete('/:id', async (request, response) => {
+booksRoutes.delete('/:id', async (request, response) => {
   try {
     const { id } = request.params;
     const result = await Book.findByIdAndDelete(id);
@@ -71,7 +71,7 @@ app.delete('/:id', async (request, response) => {
 });
 
 // route for save a new book
-app.post('/', async (request, response) => {
+booksRoutes.post('/', async (request, response) => {
   try {
     if (
       !request.body.title ||
@@ -96,4 +96,4 @@ app.post('/', async (request, response) => {
   }
 });
 
-export default router;
+export default booksRoutes;
