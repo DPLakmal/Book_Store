@@ -5,9 +5,10 @@ const booksRoutes = express.Router();
 // route for get all books form database
 booksRoutes.get('/', async (request, response) => {
   try {
+    response.setHeader('Content-Type', 'application/json');
     const books = await Book.find({});
     return response.status(200).json({
-      count: books.length, // make object to count
+      // count: books.length, // make object to count
       data: books,
     });
   } catch (error) {
@@ -18,14 +19,19 @@ booksRoutes.get('/', async (request, response) => {
 
 // route for get one book form database by id
 booksRoutes.get('/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
+  const id= req.params.id;
+  if (!isValidResource(id)) {
+    const error = new Error('Resource not found');
+    error.status = 404;
+    error.code = 'ResourceNotFound';
+    error.details = `Resource with id ${id} does not exist.`;
+    return next(error);
+  }
+    
     const book = await Book.findById(id);
     return response.status(200).json(book);
-  } catch (error) {
-    console.log(error.message);
-    response.status(500).send({ message: error.message });
-  }
+
+  
 });
 
 // route for update a book
@@ -86,6 +92,7 @@ booksRoutes.post('/', async (request, response) => {
       title: request.body.title,
       author: request.body.author,
       publishYear: request.body.publishYear,
+      imgUrl: request.body.imgUrl
     };
 
     const book = await Book.create(newBook);
