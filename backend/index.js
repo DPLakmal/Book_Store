@@ -1,10 +1,9 @@
 import express from "express";
-import { PORT, mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
-import cors from 'cors';
+import cors from "cors";
 import booksRoutes from "./routes/bookRoute.js";
-require("dotenv").config();
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 const app = express();
@@ -20,23 +19,31 @@ app.use(express.json());
 
 // Allow requests from 'http://localhost:5173'
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header("Access-Control-Allow-Origin", process.env.ALLOWED_ORIGIN);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGIN || "http://localhost:5173", // or an array of allowed origins
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+};
+
+app.use(cors(corsOptions));
+
 app.get("/", (req, res) => {
-  res.status(201).json({message: "Connected to Backend!"});
+  res.status(201).json({ message: "Connected to Backend!" });
 });
 
-app.use('/books', booksRoutes);
+app.use("/api/v1/books", booksRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("App connected to database");
-    const PORT = process.env.PORT
+    const PORT = process.env.PORT;
     app.listen(PORT, () => {
       console.log(`App is listening port is ${PORT}`);
     });
