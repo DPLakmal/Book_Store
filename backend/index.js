@@ -3,6 +3,7 @@ import { PORT, mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
 import cors from 'cors';
 import booksRoutes from "./routes/bookRoute.js";
+require("dotenv").config();
 
 
 
@@ -25,17 +26,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (request, response) => {
-  console.log(request);
-  response.status(200).send("Novsgd");
+app.get("/", (req, res) => {
+  res.status(201).json({message: "Connected to Backend!"});
 });
 
 app.use('/books', booksRoutes);
 
 mongoose
-  .connect(mongoDBURL)
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("App connected to database");
+    const PORT = process.env.PORT
     app.listen(PORT, () => {
       console.log(`App is listening port is ${PORT}`);
     });
